@@ -5,11 +5,13 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
+import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 
 public class AtmMachineTest {
 
@@ -38,7 +40,7 @@ public class AtmMachineTest {
     }
 
     @Test
-    public void whenAmountIsBiggerThanZero_thenProperPaymentIsReturned() {
+    public void whenAmountIsBiggerThanZeroButRequiresOneBanknote_thenProperPaymentIsReturned() {
         AtmMachine atmMachine = new AtmMachine(cardProviderService, bankService, moneyDepot);
         Money money = Money.builder().withAmount(200).withCurrency(Currency.PL).build();
         Card card = Card.builder().build();
@@ -83,5 +85,15 @@ public class AtmMachineTest {
         Money money = Money.builder().withAmount(100).withCurrency(Currency.PL).build();
         Card card = Card.builder().build();
         atmMachine.withdraw(money, card);
+    }
+
+    @Test
+    public void whenAmountIsBiggerThanZeroButRequiresMoreThanOneBanknote_thenProperPaymentIsReturned() {
+        AtmMachine atmMachine = new AtmMachine(cardProviderService, bankService, moneyDepot);
+        Money money = Money.builder().withAmount(800).withCurrency(Currency.PL).build();
+        Card card = Card.builder().build();
+        Payment payment = atmMachine.withdraw(money, card);
+        assertEquals(payment.getValue().size(), 3);
+        assertThat(payment.getValue(), containsInAnyOrder(Banknote.PL500, Banknote.PL200, Banknote.PL100));
     }
 }
