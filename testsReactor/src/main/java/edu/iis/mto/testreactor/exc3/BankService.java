@@ -4,7 +4,7 @@ public interface BankService {
 
     void startTransaction(AuthenticationToken authCode);
 
-    boolean charge(AuthenticationToken authCode, Money amount);
+    void charge(AuthenticationToken authCode, Money amount) throws InsufficientFundsException;
 
     void commit(AuthenticationToken authCode);
 

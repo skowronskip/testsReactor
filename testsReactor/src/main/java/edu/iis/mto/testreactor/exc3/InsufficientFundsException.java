@@ -1,6 +1,6 @@
 package edu.iis.mto.testreactor.exc3;
 
-public class InsufficientFundsException extends RuntimeException {
+public class InsufficientFundsException extends Exception {
 
     private static final long serialVersionUID = 1L;
 

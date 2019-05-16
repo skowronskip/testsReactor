@@ -3,7 +3,6 @@ package edu.iis.mto.testreactor.exc3;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class AtmMachine {
@@ -26,7 +25,7 @@ public class AtmMachine {
 
     private void validateAmount(Money amount) {
         if (amount.getAmount() <= 0 || cannotBePayedWithBanknotes(amount)) {
-            throw new WrongMoneyAmount();
+            throw new WrongMoneyAmountException();
         }
     }
 
@@ -37,33 +36,30 @@ public class AtmMachine {
     }
 
     private AuthenticationToken autorize(Card card) {
-        Optional<AuthenticationToken> authCode = cardService.authorize(card);
-        if (authCode.isPresent()) {
-            return authCode.get();
+        try {
+            return cardService.authorize(card);
+        } catch (CardAuthorizationException e) {
+            throw new AtmException(e);
         }
-        throw new CardAuthorizationException();
+
     }
 
     private Payment performTransaction(Money amount, AuthenticationToken authCode) {
         bankService.startTransaction(authCode);
         try {
-            if (!bankService.charge(authCode, amount)) {
-                throw new InsufficientFundsException();
-            }
+            bankService.charge(authCode, amount);
             Payment payment = releasePayment(amount);
             bankService.commit(authCode);
             return payment;
         } catch (Exception e) {
             bankService.abort(authCode);
-            throw e;
+            throw new AtmException(e);
         }
     }
 
-    private Payment releasePayment(Money money) {
+    private Payment releasePayment(Money money) throws MoneyDepotException {
         List<Banknote> banknotes = preparePayment(money);
-        if (!moneyDepot.releaseBanknotes(banknotes)) {
-            throw new MoneyDepotException();
-        }
+        moneyDepot.releaseBanknotes(banknotes);
         return new Payment(banknotes);
     }
 

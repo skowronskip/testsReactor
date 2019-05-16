@@ -4,6 +4,6 @@ import java.util.List;
 
 public interface MoneyDepot {
 
-    boolean releaseBanknotes(List<Banknote> withdrawal);
+    void releaseBanknotes(List<Banknote> withdrawal) throws MoneyDepotException;
 
 }
