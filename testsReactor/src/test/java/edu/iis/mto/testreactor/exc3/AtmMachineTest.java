@@ -1,11 +1,11 @@
-package edu.iis.mto.testreactor.exc1;
+package edu.iis.mto.testreactor.exc3;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
-public class CoffeeMachineTest {
+public class AtmMachineTest {
 
     @Test
     public void itCompiles() {
