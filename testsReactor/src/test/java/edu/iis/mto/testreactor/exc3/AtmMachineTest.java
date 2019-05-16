@@ -91,4 +91,12 @@ public class AtmMachineTest {
         assertThat(payment.getValue().size(), is(3));
         assertThat(payment.getValue(), containsInAnyOrder(Banknote.PL500, Banknote.PL200, Banknote.PL100));
     }
+
+    @Test
+    public void whenWithdrawIsCalled_thenCardServiceAuthorizeIsCalledOnce() throws CardAuthorizationException {
+        Money money = Money.builder().withAmount(800).withCurrency(Currency.PL).build();
+        Card card = Card.builder().build();
+        atmMachine.withdraw(money, card);
+        verify(cardProviderService, times(1)).authorize(any(Card.class));
+    }
 }
