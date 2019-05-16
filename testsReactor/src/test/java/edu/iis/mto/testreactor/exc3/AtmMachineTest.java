@@ -99,4 +99,12 @@ public class AtmMachineTest {
         atmMachine.withdraw(money, card);
         verify(cardProviderService, times(1)).authorize(any(Card.class));
     }
+
+    @Test
+    public void whenWithdrawIsCalled_thenBankServiceStartTransactionIsCalledOnce() {
+        Money money = Money.builder().withAmount(800).withCurrency(Currency.PL).build();
+        Card card = Card.builder().build();
+        atmMachine.withdraw(money, card);
+        verify(bankService, times(1)).startTransaction(any(AuthenticationToken.class));
+    }
 }
