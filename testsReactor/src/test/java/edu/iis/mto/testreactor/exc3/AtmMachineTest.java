@@ -16,10 +16,10 @@ public class AtmMachineTest {
     private CardProviderService cardProviderService;
     private BankService bankService;
     private MoneyDepot moneyDepot;
+    private AtmMachine atmMachine;
 
     @Rule
     public ExpectedException exception = ExpectedException.none();
-    private AtmMachine atmMachine;
 
     @Before
     public void setUp() throws CardAuthorizationException, InsufficientFundsException, MoneyDepotException {
