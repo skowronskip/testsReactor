@@ -125,4 +125,21 @@ public class AtmMachineTest {
         atmMachine.withdraw(money, card);
         verify(bankService, times(2)).abort(any(AuthenticationToken.class));
     }
+
+    @Test
+    public void whenWithdrawIsCalled_thenMoneyDepotReleaseBanknotesIsCalled() throws MoneyDepotException {
+        Money money = Money.builder().withAmount(800).withCurrency(Currency.PL).build();
+        Card card = Card.builder().build();
+        atmMachine.withdraw(money, card);
+        verify(moneyDepot, times(1)).releaseBanknotes(anyListOf(Banknote.class));
+    }
+
+    @Test
+    public void whenAmountIsBiggerThanZeroButRequiresMoreThanOneBanknote_thenProperPaymentIsReturnedWithSortedBanknotes() {
+        Money money = Money.builder().withAmount(1300).withCurrency(Currency.PL).build();
+        Card card = Card.builder().build();
+        Payment payment = atmMachine.withdraw(money, card);
+        assertThat(payment.getValue().size(), is(4));
+        assertThat(payment.getValue(), contains(Banknote.PL100, Banknote.PL200, Banknote.PL500, Banknote.PL500));
+    }
 }
