@@ -55,4 +55,14 @@ public class AtmMachineTest {
         Card card = Card.builder().build();
         atmMachine.withdraw(money, card);
     }
+
+    @Test
+    public void whenCardServiceThrowsCardAuthorizationException_thenAtmExceptionIsThrown() throws CardAuthorizationException {
+        doThrow(CardAuthorizationException.class).when(cardProviderService).authorize(any(Card.class));
+        exception.expect(AtmException.class);
+        AtmMachine atmMachine = new AtmMachine(cardProviderService, bankService, moneyDepot);
+        Money money = Money.builder().withAmount(200).withCurrency(Currency.PL).build();
+        Card card = Card.builder().build();
+        atmMachine.withdraw(money, card);
+    }
 }
