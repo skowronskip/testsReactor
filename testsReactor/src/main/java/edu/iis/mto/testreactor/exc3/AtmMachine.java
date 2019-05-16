@@ -3,6 +3,7 @@ package edu.iis.mto.testreactor.exc3;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class AtmMachine {
@@ -12,9 +13,9 @@ public class AtmMachine {
     private final MoneyDepot moneyDepot;
 
     public AtmMachine(CardProviderService cardService, BankService bankService, MoneyDepot moneyDepot) {
-        this.cardService = cardService;
-        this.bankService = bankService;
-        this.moneyDepot = moneyDepot;
+        this.cardService = Objects.requireNonNull(cardService, "cardService==null");
+        this.bankService = Objects.requireNonNull(bankService, "bankService==null");
+        this.moneyDepot = Objects.requireNonNull(moneyDepot, "moneyDepot==null");
     }
 
     public Payment withdraw(Money amount, Card card) {
