@@ -5,8 +5,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
@@ -45,8 +44,8 @@ public class AtmMachineTest {
         Money money = Money.builder().withAmount(200).withCurrency(Currency.PL).build();
         Card card = Card.builder().build();
         Payment payment = atmMachine.withdraw(money, card);
-        assertEquals(payment.getValue().size(), 1);
-        assertEquals(payment.getValue().get(0), Banknote.PL200);
+        assertThat(payment.getValue().size(), is(1));
+        assertThat(payment.getValue(), contains(Banknote.PL200));
     }
 
     @Test
@@ -93,7 +92,7 @@ public class AtmMachineTest {
         Money money = Money.builder().withAmount(800).withCurrency(Currency.PL).build();
         Card card = Card.builder().build();
         Payment payment = atmMachine.withdraw(money, card);
-        assertEquals(payment.getValue().size(), 3);
+        assertThat(payment.getValue().size(), is(3));
         assertThat(payment.getValue(), containsInAnyOrder(Banknote.PL500, Banknote.PL200, Banknote.PL100));
     }
 }
