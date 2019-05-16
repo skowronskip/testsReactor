@@ -115,4 +115,14 @@ public class AtmMachineTest {
         atmMachine.withdraw(money, card);
         verify(bankService, never()).abort(any(AuthenticationToken.class));
     }
+
+    @Test
+    public void whenBankServiceChargeIsThrowingException_thenBankServiceAbortIsCalledOnce() throws InsufficientFundsException {
+        doThrow(InsufficientFundsException.class).when(bankService).charge(any(AuthenticationToken.class), any(Money.class));
+        exception.expect(AtmException.class);
+        Money money = Money.builder().withAmount(800).withCurrency(Currency.PL).build();
+        Card card = Card.builder().build();
+        atmMachine.withdraw(money, card);
+        verify(bankService, times(2)).abort(any(AuthenticationToken.class));
+    }
 }
