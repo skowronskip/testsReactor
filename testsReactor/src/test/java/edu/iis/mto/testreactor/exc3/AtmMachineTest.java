@@ -107,4 +107,12 @@ public class AtmMachineTest {
         atmMachine.withdraw(money, card);
         verify(bankService, times(1)).startTransaction(any(AuthenticationToken.class));
     }
+
+    @Test
+    public void whenBankServiceChargeIsNotThrowingException_thenBankServiceAbortIsNotCalled() {
+        Money money = Money.builder().withAmount(800).withCurrency(Currency.PL).build();
+        Card card = Card.builder().build();
+        atmMachine.withdraw(money, card);
+        verify(bankService, never()).abort(any(AuthenticationToken.class));
+    }
 }
