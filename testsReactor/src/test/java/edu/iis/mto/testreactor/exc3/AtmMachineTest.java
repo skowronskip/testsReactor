@@ -74,4 +74,14 @@ public class AtmMachineTest {
         Card card = Card.builder().build();
         atmMachine.withdraw(money, card);
     }
+
+    @Test
+    public void whenBankServiceThrowsInsufficientFundsException_thenAtmExceptionIsThrown() throws InsufficientFundsException {
+        doThrow(InsufficientFundsException.class).when(bankService).charge(any(AuthenticationToken.class), any(Money.class));
+        exception.expect(AtmException.class);
+        AtmMachine atmMachine = new AtmMachine(cardProviderService, bankService, moneyDepot);
+        Money money = Money.builder().withAmount(100).withCurrency(Currency.PL).build();
+        Card card = Card.builder().build();
+        atmMachine.withdraw(money, card);
+    }
 }
