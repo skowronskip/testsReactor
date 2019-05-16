@@ -1,20 +1,24 @@
 package edu.iis.mto.testreactor.exc3;
 
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
-
-import org.junit.Before;
-import org.junit.Test;
-
-import java.util.List;
 
 public class AtmMachineTest {
 
     private CardProviderService cardProviderService;
     private BankService bankService;
     private MoneyDepot moneyDepot;
+
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
 
     @Before
     public void setUp() throws CardAuthorizationException, InsufficientFundsException, MoneyDepotException {
@@ -43,4 +47,12 @@ public class AtmMachineTest {
         assertEquals(payment.getValue().get(0), Banknote.PL200);
     }
 
+    @Test
+    public void whenAmountIsEqualZero_thenWrongMoneyAmountExceptionIsThrown() {
+        exception.expect(WrongMoneyAmountException.class);
+        AtmMachine atmMachine = new AtmMachine(cardProviderService, bankService, moneyDepot);
+        Money money = Money.builder().withAmount(0).withCurrency(Currency.PL).build();
+        Card card = Card.builder().build();
+        atmMachine.withdraw(money, card);
+    }
 }
