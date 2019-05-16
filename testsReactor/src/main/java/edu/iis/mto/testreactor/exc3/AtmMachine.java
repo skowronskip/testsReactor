@@ -26,7 +26,7 @@ public class AtmMachine {
 
     private void validateAmount(Money amount) {
         if (amount.getAmount() <= 0 || cannotBePayedWithBanknotes(amount)) {
-            throw new WrongMoneyAmount();
+            throw new WrongMoneyAmountException();
         }
     }
 
@@ -47,15 +47,19 @@ public class AtmMachine {
     private Payment performTransaction(Money amount, AuthenticationToken authCode) {
         bankService.startTransaction(authCode);
         try {
-            if (!bankService.charge(authCode, amount)) {
-                throw new InsufficientFundsException();
-            }
+            chargeAccount(amount, authCode);
             Payment payment = releasePayment(amount);
             bankService.commit(authCode);
             return payment;
         } catch (Exception e) {
             bankService.abort(authCode);
             throw e;
+        }
+    }
+
+    private void chargeAccount(Money amount, AuthenticationToken authCode) {
+        if (!bankService.charge(authCode, amount)) {
+            throw new InsufficientFundsException();
         }
     }
 
