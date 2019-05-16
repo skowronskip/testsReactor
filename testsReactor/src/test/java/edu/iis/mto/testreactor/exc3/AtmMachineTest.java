@@ -65,4 +65,13 @@ public class AtmMachineTest {
         Card card = Card.builder().build();
         atmMachine.withdraw(money, card);
     }
+
+    @Test
+    public void whenAmountCannotBePayedWithBankotes_thenWrongMoneyAmountExceptionIsThrown() {
+        exception.expect(WrongMoneyAmountException.class);
+        AtmMachine atmMachine = new AtmMachine(cardProviderService, bankService, moneyDepot);
+        Money money = Money.builder().withAmount(222).withCurrency(Currency.PL).build();
+        Card card = Card.builder().build();
+        atmMachine.withdraw(money, card);
+    }
 }
